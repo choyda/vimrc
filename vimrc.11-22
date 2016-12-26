@@ -1,0 +1,386 @@
+""""""""""""""""""""""""""""""""""""""""
+"  一般配置     
+""""""""""""""""""""""""""""""""""""""""
+"""缩进相关
+set sw=4 "自动缩进的时候，缩进尺寸为 4 个空格"
+set ts=4 "Tab 宽度为 4 个字符"
+set et   "编辑时将所有 Tab 替换为空格
+set smarttab "可以只按一下Backspace就删除et替换Tab的4 个空格了
+set smartindent "缩进相关
+set autoindent  "自动缩进
+set lbr "排版避免折行
+set fo+=mB "汉子换行打断不添加空格
+
+"字符编码相关
+set termencoding=utf-8
+set encoding=utf8  
+set fileencodings=utf8,ucs-bom,gbk,cp936,gb2312,gb18030
+set langmenu=zh_CN.UTF-8 "语言设置
+set helplang=cn "帮助信息用中文
+set cmdheight=2 "总是显示状态行
+set iskeyword+=_,$,@,%,#,-  "带有如下符号的单词不要被换行分割
+
+"外观显示
+syntax on "语法高亮
+set number "显示行号
+set mousemodel=popup "右键出现菜单
+set shortmess=atI   " 启动的时候不显示那个援助乌干达儿童的提示  
+set go=             " 不要图形按钮  
+"color desert     " 设置背景主题  
+color ron     " 设置背景主题  
+set background=dark
+set ruler           " 显示标尺  
+set showcmd         " 输入的命令显示出来，看的清楚些  
+set scrolloff=3     " 光标移动到buffer的顶部和底部时保持3行距离  
+set laststatus=2    " 启动显示状态行1,总是显示状态行2  
+set magic          " 设置魔术
+set guioptions-=T  " 隐藏工具栏
+set guioptions-=m  " 隐藏菜单栏
+
+"其他编辑相关
+set sm "显示括号配对情况
+set selection=inclusive "光标所在位置也属于被选中的范围
+set wildmenu "在命令模式下使用 Tab 自动补全的时候显示菜单
+set nocompatible  "去掉讨厌的有关vi一致性模式，避免以前版本的一些bug和局限  
+set mouse=v "在编辑模式下使用鼠标
+set autoread  "设置当文件被改动时自动载入
+set completeopt=preview,menu "代码补全 
+set hlsearch "搜索逐字高亮
+set incsearch    "搜索逐字符高亮2
+set autowrite    "自动保存
+set noeb " 去掉输入错误的提示声音
+set confirm " 在处理未保存或只读文件的时候，弹出确认
+set nobackup  "禁止生成临时文件1
+set noswapfile  "禁止生成临时文件2
+set ignorecase  "搜索忽略大小写
+set t_ti= t_te=  "退出vim后，内容显示在终端屏幕
+set linespace=0 " 增强模式中的命令行自动完成操作
+set fillchars=vert:\ ,stl:\ ,stlnc:\  "在被分割的窗口间显示空白，便于阅读
+set showmatch " 高亮显示匹配的括号
+set matchtime=1  " 匹配括号高亮的时间（单位是十分之一秒）
+set completeopt=longest,menu "打开文件类型检测, 加了这句才可以用智能补全
+set pastetoggle=<F2> "可以从外面复制到里面不乱"
+" 可以在buffer的任何地方使用鼠标（类似office中在工作区双击鼠标定位）
+
+
+""""""""""""""""""""""""""""""""""""""""
+"文件，自动载入 配置                   
+""""""""""""""""""""""""""""""""""""""""
+filetype on "侦测文件类型
+filetype plugin indent on 
+filetype plugin on "载入文件类型插件
+filetype indent on  " 为特定文件类型载入相关缩进文件
+autocmd! bufwritepost .vimrc source %     "vimrc文件修改之后自动加载。
+au FileType php setlocal dict+=~/.vim/dict/php_funclist.dict "字符间插入的像素行数目
+au FileType css setlocal dict+=~/.vim/dict/css.dict
+au FileType c setlocal dict+=~/.vim/dict/c.dict
+au FileType cpp setlocal dict+=~/.vim/dict/cpp.dict
+au FileType scale setlocal dict+=~/.vim/dict/scale.dict
+au FileType javascript setlocal dict+=~/.vim/dict/javascript.dict
+au FileType html setlocal dict+=~/.vim/dict/javascript.dict
+au FileType html setlocal dict+=~/.vim/dict/css.dict
+
+
+""""""""""""""""""""""""""""""""""""""""
+"快捷件配置                   
+""""""""""""""""""""""""""""""""""""""""
+"添加注释
+let mapleader = "\<Space>"
+
+"刷新vimrc文件
+nmap <leader>s :source .vimrc<CR> 
+
+"保存
+nnoremap <Leader>w :w<CR>
+nnoremap <Leader>q :q<CR>
+
+
+"跳转和行定位
+nnoremap <CR> G
+nnoremap <BS> gg
+
+"关闭无聊的窗口提示
+map q: :q
+
+"会以root身份保存，不用切换用户
+nnoremap <Leader>rw :w !sudo tee %
+
+"多文件切换
+nnoremap <Leader>n :bn<CR>
+nnoremap <Leader>p :bp<CR>
+nnoremap <Leader>l :ls<CR>
+nnoremap <Leader>d :bd<CR>
+
+
+""""""""""""""""""""""""""""""""""""""""""
+" 函数定义                   
+""""""""""""""""""""""""""""""""""""""""""
+""""新建.c,.h,.sh,.java文件，自动插入文件头""""
+autocmd BufNewFile *.cpp,*.[ch],*.sh,*.rb,*.java,*.py exec ":call SetTitle()" 
+
+""定义函数SetTitle，自动插入文件头 func SetTitle() 
+func! SetTitle()
+    "如果文件类型为.sh文件 
+    if &filetype == 'sh' 
+        call setline(1,"\#!/bin/bash") 
+        call append(line("."), "") 
+    elseif &filetype == 'python'
+        call setline(1,"#!/usr/bin/env python")
+        call append(line("."),"# coding=utf-8")
+        call append(line(".")+1, "") 
+
+    elseif &filetype == 'ruby'
+        call setline(1,"#!/usr/bin/env ruby")
+        call append(line("."),"# encoding: utf-8")
+        call append(line(".")+1, "")
+
+        "    elseif &filetype == 'mkd'
+        "        call setline(1,"<head><meta charset=\"UTF-8\"></head>")
+    else 
+        call setline(1, "/*************************************************************************") 
+        call append(line("."), " > File Name: ".expand("%")) 
+        call append(line(".")+1, " > Author: ") 
+        call append(line(".")+2, " > Mail: ") 
+        call append(line(".")+3, " > Created Time: ".strftime("%c")) 
+        call append(line(".")+4, " ************************************************************************/") 
+        call append(line(".")+5, "")
+    endif
+    if expand("%:e") == 'cpp'
+        call append(line(".")+6, "#include<iostream>")
+        call append(line(".")+7, "using namespace std;")
+        call append(line(".")+8, "")
+    endif
+    if &filetype == 'c'
+        call append(line(".")+6, "#include<stdio.h>")
+        call append(line(".")+7, "")
+    endif
+    if expand("%:e") == 'h'
+        call append(line(".")+6, "#ifndef _".toupper(expand("%:r"))."_H")
+        call append(line(".")+7, "#define _".toupper(expand("%:r"))."_H")
+        call append(line(".")+8, "#endif")
+    endif
+    if &filetype == 'java'
+        call append(line(".")+6,"public class ".expand("%:r"))
+        call append(line(".")+7,"")
+    endif
+    "新建文件后，自动定位到文件末尾
+endfunc 
+autocmd BufNewFile * normal G
+
+
+""""C，C++ 按F5编译运行""""
+map <F5> :call CompileRunGcc()<CR>
+func! CompileRunGcc()
+exec "w"
+if &filetype == 'c'
+exec "!gcc % -o %<"
+exec "!time ./%<"
+elseif &filetype == 'cpp'
+exec "!g++ % -o %<"
+exec "!time ./%<"
+elseif &filetype == 'java' 
+exec "!javac %" 
+exec "!time java %<"
+elseif &filetype == 'sh'
+:!time bash %
+elseif &filetype == 'python'
+exec "!time python2.7 %"
+    elseif &filetype == 'html'
+        exec "!firefox % &"
+    elseif &filetype == 'go'
+        exec "!go build %<"
+        exec "!time go run %"
+    elseif &filetype == 'mkd'
+        exec "!~/.vim/markdown.pl % > %.html &"
+        exec "!firefox %.html &"
+endif
+endfunc
+
+"C,C++的调试 gdb
+map <F8> :call Rungdb()<CR>
+func! Rungdb()
+exec "w"
+exec "!g++ % -g -o %<"
+exec "!gdb ./%<"
+endfunc
+
+
+""""" 本地上传函数""""
+"上传130 代码
+nnoremap <leader>k3 :call SyncFile130()<cr> 
+function! SyncFile130()
+    let localDir = expand("%:p")
+    let remoteDir = '/mfw_www'.strpart(localDir, matchend(localDir,'www2011'))
+    let scpCmd = "scp -P 333 ".localDir." caida@10.1.1.130:".remoteDir
+    echo system(scpCmd) 
+endfunction
+
+"上传135 代码
+nnoremap <leader>k5 :call SyncFile135()<cr> 
+function! SyncFile135()
+    let localDir = expand("%:p")
+    let remoteDir = '/mfw_www'.strpart(localDir, matchend(localDir,'www2011'))
+    let scpCmd = "scp -P 333 ".localDir." caida@10.1.1.135:".remoteDir
+    echo system(scpCmd) 
+endfunction
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"实用设置
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""打开文件自动回到上次退出的地方""""
+if has("autocmd")
+      autocmd BufReadPost *
+          \ if line("'\"") > 0 && line("'\"") <= line("$") |
+          \   exe "normal g`\"" |
+          \ endif
+endif
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 插件下载管理
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"你在此设置运行时路径 
+set rtp+=~/.vim/bundle/vundle/
+
+"旧版vundle 对应的函数，新版是#begin(),安装命令是Plugin
+call vundle#rc()
+
+"插件管理插件 旧版
+Bundle 'gmarik/vundle' 
+
+"CtrlP插件配置
+Bundle 'ctrlpvim/ctrlp.vim' 
+let g:ctrlp_map = 'ce'   
+let g:ctrlp_cmd = 'CtrlP'
+map cm :CtrlPMRU<CR>
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\v[\/]\.(git|hg|svn|rvm)$',
+  \ 'file': '\v\.(exe|so|dll|zip|tar|tar.gz|pyc)$',
+  \ }
+let g:ctrlp_working_path_mode='ra'
+let g:ctrlp_match_window_bottom=1
+let g:ctrlp_max_height=15
+let g:ctrlp_match_window_reversed=0
+let g:ctrlp_mruf_max=500
+let g:ctrlp_follow_symlinks=1
+
+"ack 搜索插件
+Bundle 'mileszs/ack.vim' 
+let g:ackprg = 'ag --nogroup --nocolor --column' "如果用ag代替ack的话打开此注释
+nmap ck :Ack -i -w <space>
+
+"彩色buffer功能
+Bundle 'bling/vim-airline' 
+
+"PHP 语法检查插件
+Bundle 'joonty/vim-phpqa.git'
+let g:phpqa_php_cmd='php'
+let g:phpqa_messdetector_cmd='phpmd'
+let g:phpqa_messdetector_ruleset = "/Users/caida/process/src_pack/phpmd-rulesets/phpmd.xml"
+let g:phpqa_messdetector_autorun = 0  "自动保存开启0 避免每次都长时间检测
+let g:phpqa_codesniffer_cmd='phpcs'
+let g:phpqa_codesniffer_args = "--standard=Zend"
+let g:phpqa_codesniffer_args = "--severity=0"
+"let g:phpqa_codesniffer_args ="--config-set show_warnings 0"
+
+"处理gitmerge的冲突的
+Bundle 'tpope/vim-fugitive'
+
+"vim依赖的库
+Bundle 'L9'
+
+"文件搜索工具类似于Ctrlp 搜索[没使用]
+Bundle 'FuzzyFinder'
+
+"文件搜索工具类似于Ctrlp 搜索[没使用]
+Bundle 'https://github.com/wincent/command-t.git'
+
+"各种括号补全插件
+Bundle 'Auto-Pairs'
+
+"复制粘贴插件[没使用]
+Bundle 'CaptureClipboard'
+
+"快速注释插件
+Bundle 'scrooloose/nerdcommenter'
+"<leader>cc 注释，<leader>cu 解注释
+
+"文件内搜索函数
+Bundle 'tacahiroy/ctrlp-funky'
+nnoremap <Leader>fu :CtrlPFunky<Cr>
+
+"选择括号中的单词 
+Bundle 'terryma/vim-expand-region'
+vmap v <Plug>(expand_region_expand)
+vmap <C-v> <Plug>(expand_region_shrink)
+
+"文件树窗口
+Bundle 'scrooloose/nerdtree'
+nnoremap <Leader>ww <C-w>w<CR>
+nnoremap <leader>r :NERDTreeToggle<CR>
+
+"vim 默认安装的插件，所以直接配置久ok了
+"TagList默认打开Taglist ctags
+let Tlist_Auto_Open=0 
+let Tlist_Ctags_Cmd = '/usr/local/bin/ctags' 
+let Tlist_Show_One_File = 1 "不同时显示多个文件的tag，只显示当前文件的 
+let Tlist_File_Fold_Auto_Close = 1
+let Tlist_Exit_OnlyWindow = 1 "如果taglist窗口是最后一个窗口，则退出vim 
+let Tlist_Use_Right_Window = 1 "在右侧窗口中显示taglist窗口
+
+"CTags的设定
+set tags=tags;  
+set autochdir 
+set fileformats=unix,dos
+let Tlist_Sort_Type = "name"    " 按照名称排序  
+let Tlist_Use_Right_Window = 1  " 在右侧显示窗口  
+let Tlist_Compart_Format = 1    " 压缩方式  
+let Tlist_Exist_OnlyWindow = 1  " 如果只有一个buffer，kill窗口也kill掉buffer  
+""let Tlist_File_Fold_Auto_Close = 0  " 不要关闭其他文件的tags  
+""let Tlist_Enable_Fold_Column = 0    " 不要显示折叠树  
+"let Tlist_Show_One_File=1            "不同时显示多个文件的tag，只显示当前文件的
+
+"综合查找插件
+Bundle 'Shougo/unite.vim'
+
+"代码补全插件
+Bundle 'Shougo/neocomplcache.vim'
+let g:acp_enableAtStartup = 0
+let g:neocomplcache_enable_at_startup = 1
+let g:neocomplcache_enable_smart_case = 1
+let g:neocomplcache_min_syntax_length = 3
+let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
+let g:neocomplcache_dictionary_filetype_lists = {
+    \ 'default' : '',
+    \ 'vimshell' : $HOME.'/.vimshell_hist',
+    \ 'scheme' : $HOME.'/.gosh_completions'
+        \ }
+if !exists('g:neocomplcache_keyword_patterns')
+    let g:neocomplcache_keyword_patterns = {}
+endif
+let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+inoremap <expr><C-g>     neocomplcache#undo_completion()
+inoremap <expr><C-l>     neocomplcache#complete_common_string()
+inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+function! s:my_cr_function()
+  return neocomplcache#smart_close_popup() . "\<CR>"
+endfunction
+inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
+inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
+inoremap <expr><C-y>  neocomplcache#close_popup()
+inoremap <expr><C-e>  neocomplcache#cancel_popup()
+autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+if !exists('g:neocomplcache_force_omni_patterns')
+  let g:neocomplcache_force_omni_patterns = {}
+endif
+let g:neocomplcache_force_omni_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
+let g:neocomplcache_force_omni_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
+let g:neocomplcache_force_omni_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+let g:neocomplcache_force_omni_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
+
